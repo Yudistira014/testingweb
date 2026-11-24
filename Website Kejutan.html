@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ada kejutan untukmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg-deep: #0f0714;
+  --bg-mid: #240f29;
+  --bg-glow: #421638;
+  --rose: #ff4d79;
+  --blush: #ffb3c6;
+  --gold: #f6d38b;
+  --gold-soft: #fde8b8;
+  --lavender: #c8a2ff;
+  --ivory: #fff6f8;
+  --muted: rgba(255, 240, 245, 0.72);
+  --glass-bg: rgba(34, 14, 42, 0.62);
+  --glass-bg-strong: rgba(24, 10, 30, 0.82);
+  --glass-border: rgba(255, 214, 224, 0.22);
+  --glass-highlight: rgba(255, 255, 255, 0.14);
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  position: relative;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 77, 121, 0.20), transparent 45%),
+    radial-gradient(circle at 80% 25%, rgba(200, 162, 255, 0.16), transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(246, 211, 139, 0.12), transparent 50%),
+    radial-gradient(ellipse at 50% 35%, var(--bg-glow) 0%, var(--bg-mid) 48%, var(--bg-deep) 100%);
+  background-attachment: fixed;
+  color: var(--ivory);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.revealed {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Latar belakang aurora & bokeh lembut */
+.aurora {
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(75px);
+  opacity: 0.42;
+  animation: drift 16s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  width: 42vmax;
+  height: 42vmax;
+  background: radial-gradient(circle, rgba(255, 77, 121, 0.55), transparent 70%);
+  top: 5%;
+  left: 8%;
+}
+
+.orb-2 {
+  width: 38vmax;
+  height: 38vmax;
+  background: radial-gradient(circle, rgba(246, 211, 139, 0.35), transparent 70%);
+  bottom: 8%;
+  right: 8%;
+  animation-delay: -5s;
+  animation-duration: 20s;
+}
+
+.orb-3 {
+  width: 34vmax;
+  height: 34vmax;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.40), transparent 70%);
+  top: 42%;
+  left: 52%;
+  animation-delay: -10s;
+  animation-duration: 24s;
+}
+
+@keyframes drift {
+  0%   { transform: translate3d(-4%, -3%, 0) scale(1); }
+  50%  { transform: translate3d(5%, 4%, 0) scale(1.08); }
+  100% { transform: translate3d(-2%, 6%, 0) scale(0.96); }
+}
+
+canvas#fx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tombol kontrol suara & lagu */
+.sound-wrap {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top, 16px));
+  right: max(16px, env(safe-area-inset-right, 16px));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.song-pill {
+  max-width: 190px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: rgba(24, 10, 30, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--gold-soft);
+  font-size: 0.76rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.sound-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(24, 10, 30, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--gold-soft);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.sound-btn.playing {
+  border-color: rgba(246, 211, 139, 0.55);
+  box-shadow: 0 0 18px rgba(255, 77, 121, 0.35);
+}
+
+.sound-btn:hover {
+  background: rgba(255, 240, 245, 0.16);
+  border-color: rgba(246, 211, 139, 0.5);
+  transform: translateY(-1px);
+}
+
+.sound-btn:active {
+  transform: scale(0.94);
+}
+
+.sound-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.sound-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ================= TAHAP 1: KOTAK KEJUTAN ================= */
+#stage {
+  position: relative;
+  z-index: 4;
+  min-height: 100dvh;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  user-select: none;
+}
+
+#stage.fade-out {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+}
+
+.stage-eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+  margin: 0;
+}
+
+.gift-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.gift-halo {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 77, 121, 0.42) 0%, rgba(246, 211, 139, 0.18) 45%, transparent 72%);
+  filter: blur(18px);
+  animation: pulseHalo 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseHalo {
+  0%, 100% { transform: scale(0.94); opacity: 0.7; }
+  50%      { transform: scale(1.1); opacity: 1; }
+}
+
+.box {
+  position: relative;
+  width: 186px;
+  height: 182px;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  animation: floatBox 3s ease-in-out infinite;
+  filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.55));
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.box:hover {
+  transform: translateY(-6px) scale(1.04);
+}
+
+.box:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 16px;
+  border-radius: 18px;
+}
+
+.box-glow {
+  position: absolute;
+  left: 50%;
+  top: 48px;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%) scale(0.2);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff8e7 0%, rgba(246, 211, 139, 0.8) 35%, rgba(255, 77, 121, 0) 72%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+}
+
+.box.open .box-glow {
+  transform: translate(-50%, -65%) scale(2.2);
+  opacity: 0.95;
+}
+
+.body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 132px;
+  border-radius: 6px 6px 18px 18px;
+  background: linear-gradient(145deg, #e11d58 0%, #a61144 55%, #730a31 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.25),
+    inset 0 -10px 22px rgba(25, 0, 15, 0.45);
+  overflow: hidden;
+}
+
+.body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.14) 48%, transparent 64%);
+  transform: translateX(-120%);
+  animation: sheen 4.2s ease-in-out infinite;
+}
+
+@keyframes sheen {
+  0%, 60% { transform: translateX(-120%); }
+  100%    { transform: translateX(130%); }
+}
+
+.lid {
+  position: absolute;
+  top: 6px;
+  left: -12px;
+  right: -12px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #ff4d79 0%, #c91852 60%, #8f0e3a 100%);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.32),
+    inset 0 2px 3px rgba(255, 255, 255, 0.35);
+  transition: transform 0.85s cubic-bezier(0.22, 1.35, 0.36, 1), opacity 0.65s 0.25s ease;
+  z-index: 2;
+}
+
+.body::before,
+.lid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 14px);
+  width: 28px;
+  background: linear-gradient(90deg, #d4a048 0%, #fbe2a6 38%, #fff6d9 52%, #e0ab52 75%, #b8802a 100%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.22);
+}
+
+.bow {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 36px;
+  pointer-events: none;
+}
+
+.bow::before,
+.bow::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 48px;
+  height: 32px;
+  border: 7px solid #f6d38b;
+  border-radius: 50% 50% 10% 50%;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.55), 0 4px 10px rgba(0, 0, 0, 0.28);
+}
+
+.bow::before {
+  left: 3px;
+  transform: rotate(-16deg);
+}
+
+.bow::after {
+  right: 3px;
+  border-radius: 50% 50% 50% 10%;
+  transform: rotate(16deg);
+}
+
+.bow-knot {
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff7db, #f0c26b 65%, #b98129 100%);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+.box.open {
+  animation: none;
+}
+
+.box.open .lid {
+  transform: translateY(-150px) rotate(-24deg) scale(0.95);
+  opacity: 0;
+}
+
+@keyframes floatBox {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-8px) rotate(-2deg); }
+  50%      { transform: translateY(-4px) rotate(0deg); }
+  75%      { transform: translateY(-9px) rotate(2deg); }
+}
+
+.ajakan-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#ajakan {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.2rem, 3.6vw, 1.55rem);
+  font-weight: 500;
+  color: var(--ivory);
+  text-shadow: 0 2px 18px rgba(255, 77, 121, 0.35);
+}
+
+.tap-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--blush);
+  opacity: 0.85;
+  letter-spacing: 0.04em;
+  animation: pulseHint 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseHint {
+  0%, 100% { opacity: 0.55; transform: translateY(0); }
+  50%      { opacity: 1; transform: translateY(-2px); }
+}
+
+/* ================= TAHAP 2: HALAMAN ROMANTIS LENGKAP ================= */
+#experience {
+  position: relative;
+  z-index: 5;
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding:
+    max(24px, env(safe-area-inset-top, 24px))
+    16px
+    max(96px, calc(env(safe-area-inset-bottom, 24px) + 72px));
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.glass-panel {
+  position: relative;
+  padding: 32px 26px;
+  border-radius: 28px;
+  background: linear-gradient(160deg, rgba(44, 18, 52, 0.72) 0%, rgba(22, 9, 28, 0.82) 100%);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 1px 0 var(--glass-highlight) inset;
+  animation: cardReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16%;
+  right: 16%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(246, 211, 139, 0.75), rgba(255, 179, 198, 0.85), transparent);
+  pointer-events: none;
+}
+
+.delay-1 { animation-delay: 0.12s; }
+.delay-2 { animation-delay: 0.24s; }
+.delay-3 { animation-delay: 0.36s; }
+.delay-4 { animation-delay: 0.48s; }
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Header section dalam panel */
+.sec-head {
+  margin-bottom: 22px;
+}
+
+.sec-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.sec-title {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.35rem, 4.5vw, 1.75rem);
+  font-weight: 500;
+  color: var(--ivory);
+}
+
+.sec-sub {
+  margin: 6px 0 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+/* --- Kartu Utama --- */
+#card {
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: rgba(255, 77, 121, 0.14);
+  border: 1px solid rgba(255, 179, 198, 0.25);
+  color: var(--gold-soft);
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.photo-frame {
+  position: relative;
+  width: 164px;
+  height: 164px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(from 0deg, var(--gold), var(--rose), var(--blush), var(--lavender), var(--gold));
+  box-shadow:
+    0 0 34px rgba(255, 77, 121, 0.35),
+    0 12px 24px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.photo-frame:hover { transform: scale(1.05); }
+.photo-frame:active { transform: scale(0.97); }
+
+#foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  border: 4px solid #1b0c22;
+  background: #240f29;
+}
+
+.photo-heart {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4d79, #d81b60);
+  border: 2px solid #1b0c22;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(255, 77, 121, 0.5);
+  animation: heartbeat 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%      { transform: scale(1.18); }
+  28%      { transform: scale(1); }
+  42%      { transform: scale(1.14); }
+  56%      { transform: scale(1); }
+}
+
+h1#nama {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 8.5vw, 3.4rem);
+  line-height: 1.15;
+  margin: 0 0 4px;
+  background: linear-gradient(135deg, #fff6f8 10%, var(--blush) 52%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 16px rgba(255, 77, 121, 0.25));
+}
+
+#judul {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--gold-soft);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 18px auto 16px;
+  width: 66%;
+  color: var(--blush);
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 179, 198, 0.55), transparent);
+}
+
+#pesan {
+  min-height: 5.2em;
+  margin: 0 auto 18px;
+  max-width: 46ch;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: rgba(255, 246, 248, 0.92);
+  white-space: pre-line;
+}
+
+#pesan.typing::after {
+  content: "|";
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--gold);
+  animation: blink 0.8s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to { opacity: 0; }
+}
+
+#dari {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 0.96rem;
+  margin: 0 0 24px;
+  color: var(--blush);
+  opacity: 0.92;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#lagi {
+  position: relative;
+  overflow: hidden;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 13px 26px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4d79 0%, #e11d58 55%, #b8154b 100%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 10px 26px rgba(255, 77, 121, 0.38),
+    0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#lagi::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.28) 50%, transparent 75%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+#lagi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(255, 77, 121, 0.5);
+}
+
+#lagi:hover::after {
+  transform: translateX(120%);
+}
+
+#lagi:active { transform: scale(0.96); }
+
+.btn-ghost {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 214, 224, 0.28);
+  background: rgba(255, 240, 245, 0.07);
+  color: var(--ivory);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 240, 245, 0.14);
+  border-color: rgba(246, 211, 139, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-ghost:active { transform: scale(0.95); }
+
+#lagi:focus-visible,
+.btn-ghost:focus-visible,
+.gallery-item:focus-visible,
+.reason-card:focus-visible,
+.nav-pill a:focus-visible,
+.lb-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.footer-tip {
+  margin: 18px 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  opacity: 0.72;
+}
+
+/* --- Penghitung Waktu Bersama --- */
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.counter-box {
+  padding: 16px 8px;
+  border-radius: 18px;
+  background: rgba(255, 240, 245, 0.06);
+  border: 1px solid rgba(255, 214, 224, 0.16);
+}
+
+.counter-num {
+  display: block;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+  font-weight: 700;
+  color: var(--gold-soft);
+  line-height: 1.1;
+}
+
+.counter-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blush);
+  opacity: 0.85;
+}
+
+/* --- Galeri Kenangan --- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.gallery-item {
+  position: relative;
+  border: 1px solid rgba(255, 214, 224, 0.20);
+  border-radius: 20px;
+  padding: 8px 8px 14px;
+  background: rgba(255, 246, 248, 0.06);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(246, 211, 139, 0.55);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.gallery-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1b0c22;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover .gallery-thumb img {
+  transform: scale(1.06);
+}
+
+.gallery-meta {
+  padding: 10px 6px 0;
+}
+
+.gallery-date {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+.gallery-title {
+  display: block;
+  margin-top: 3px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--ivory);
+}
+
+/* --- Kartu Alasan Interaktif (Ketuk untuk Buka) --- */
+.reasons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.reason-card {
+  position: relative;
+  min-height: 124px;
+  padding: 18px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 214, 224, 0.2);
+  background: linear-gradient(145deg, rgba(255, 77, 121, 0.14), rgba(255, 246, 248, 0.05));
+  color: var(--ivory);
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.reason-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(246, 211, 139, 0.5);
+}
+
+.reason-card .reason-front {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.reason-icon {
+  font-size: 1.4rem;
+  color: var(--gold-soft);
+}
+
+.reason-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--blush);
+}
+
+.reason-card .reason-text {
+  display: none;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ivory);
+}
+
+.reason-card.opened {
+  background: linear-gradient(145deg, rgba(246, 211, 139, 0.16), rgba(255, 77, 121, 0.16));
+  border-color: rgba(246, 211, 139, 0.55);
+}
+
+.reason-card.opened .reason-front {
+  display: none;
+}
+
+.reason-card.opened .reason-text {
+  display: block;
+  animation: fadeInSoft 0.35s ease;
+}
+
+@keyframes fadeInSoft {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* --- Timeline Jejak Momen --- */
+.timeline {
+  position: relative;
+  text-align: left;
+  padding-left: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold), var(--rose), rgba(200, 162, 255, 0.35));
+}
+
+.tl-item {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 246, 248, 0.05);
+  border: 1px solid rgba(255, 214, 224, 0.14);
+}
+
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(246, 211, 139, 0.2), 0 0 14px rgba(255, 77, 121, 0.7);
+}
+
+.tl-time {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tl-title {
+  margin: 4px 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.04rem;
+  color: var(--ivory);
+}
+
+.tl-desc {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* --- Penutup --- */
+.closing-box {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.closing-quote {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--gold-soft);
+  max-width: 38ch;
+  line-height: 1.6;
+}
+
+/* --- Navigasi Mengambang di Bawah --- */
+.nav-pill {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(20, 8, 26, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 214, 224, 0.24);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.nav-pill a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-pill a:hover,
+.nav-pill a.active {
+  background: rgba(255, 77, 121, 0.24);
+  color: var(--ivory);
+}
+
+/* --- Lightbox Modal Galeri --- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(10, 4, 14, 0.86);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: fadeInSoft 0.25s ease;
+}
+
+.lb-dialog {
+  position: relative;
+  width: min(520px, 100%);
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.65);
+  text-align: left;
+}
+
+.lb-media {
+  position: relative;
+  width: 100%;
+  max-height: 58dvh;
+  background: #140819;
+  display: grid;
+  place-items: center;
+}
+
+.lb-media img {
+  width: 100%;
+  max-height: 58dvh;
+  object-fit: cover;
+  display: block;
+}
+
+.lb-body {
+  padding: 20px 22px 22px;
+}
+
+.lb-date {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.lb-title {
+  margin: 4px 0 8px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.28rem;
+  color: var(--ivory);
+}
+
+.lb-caption {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.lb-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 214, 224, 0.14);
+}
+
+.lb-counter {
+  font-size: 0.8rem;
+  color: var(--blush);
+}
+
+.lb-btn {
+  border: 1px solid rgba(255, 214, 224, 0.26);
+  background: rgba(255, 240, 245, 0.08);
+  color: var(--ivory);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lb-btn:hover {
+  background: rgba(255, 77, 121, 0.28);
+}
+
+.lb-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 7, 20, 0.72);
+  font-size: 1.1rem;
+}
+
+/* Balon & hati melayang */
+.balon {
+  position: fixed;
+  bottom: -110px;
+  z-index: 3;
+  pointer-events: none;
+  animation: naik linear forwards;
+  opacity: 0.85;
+  filter: drop-shadow(0 8px 16px rgba(255, 77, 121, 0.25));
+}
+
+.balon.round {
+  width: 48px;
+  height: 60px;
+  border-radius: 50% 50% 48% 48%;
+  box-shadow: inset -8px -10px 18px rgba(0, 0, 0, 0.18), inset 6px 8px 14px rgba(255, 255, 255, 0.35);
+}
+
+.balon.round::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  height: 54px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), transparent);
+}
+
+.balon.heart-float {
+  font-size: var(--sz, 26px);
+  line-height: 1;
+}
+
+@keyframes naik {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+  12%  { opacity: 0.85; }
+  85%  { opacity: 0.75; }
+  100% { transform: translateY(-120vh) translateX(var(--x)) rotate(var(--rot, 12deg)); opacity: 0; }
+}
+
+@media (max-width: 520px) {
+  .glass-panel {
+    padding: 26px 18px;
+    border-radius: 24px;
+  }
+  .photo-frame {
+    width: 144px;
+    height: 144px;
+  }
+  .gallery-grid,
+  .reasons-grid {
+    grid-template-columns: 1fr;
+  }
+  .counter-grid {
+    gap: 8px;
+  }
+  .nav-pill a {
+    padding: 7px 11px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb, .gift-halo, .box, .body::after, .tap-hint, .glass-panel, .photo-heart, #pesan.typing::after {
+    animation: none !important;
+  }
+  .balon {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<audio id="bgm" loop preload="auto"></audio>
+<div id="ytHolder" aria-hidden="true" style="position:fixed;left:-9999px;bottom:0;width:200px;height:200px;opacity:0;pointer-events:none"></div>
+
+<div class="sound-wrap">
+  <span class="song-pill hidden" id="songPill"></span>
+  <button class="sound-btn" id="soundBtn" type="button" aria-label="Suara kotak musik aktif" title="Aktifkan / matikan suara">
+    <svg id="soundIconOn" viewBox="0 0 24 24">
+      <path d="M11 5L6 9H3v6h3l5 4V5z"></path>
+      <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+      <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+    </svg>
+    <svg id="soundIconOff" class="hidden" viewBox="0 0 24 24">
+      <path d="M11 5L6 9H3v6h3l5 4V5z"></path>
+      <line x1="22" y1="9" x2="16" y2="15"></line>
+      <line x1="16" y1="9" x2="22" y2="15"></line>
+    </svg>
+  </button>
+</div>
+
+<!-- TAHAP 1: KOTAK KEJUTAN -->
+<main id="stage">
+  <p class="stage-eyebrow" id="stageLabel">Kejutan Spesial</p>
+  <div class="gift-wrap">
+    <div class="gift-halo" aria-hidden="true"></div>
+    <button class="box" id="box" type="button" aria-label="Buka kotak kejutan">
+      <span class="box-glow" aria-hidden="true"></span>
+      <span class="body"></span>
+      <span class="lid"><span class="bow"><span class="bow-knot"></span></span></span>
+    </button>
+  </div>
+  <div class="ajakan-wrap">
+    <p id="ajakan">Ada sesuatu untukmu.</p>
+    <span class="tap-hint">✦ Ketuk kotaknya untuk membuka ✦</span>
+  </div>
+</main>
+
+<!-- TAHAP 2: HALAMAN KEJUTAN LENGKAP -->
+<div id="experience" class="hidden" aria-live="polite">
+  <!-- 1. Kartu Ucapan Utama -->
+  <section id="card" class="glass-panel">
+    <div class="card-badge" id="cardLabel">✦ Khusus Untukmu ✦</div>
+    <div class="photo-frame" id="photoFrame" role="button" tabindex="0" aria-label="Ketuk foto untuk taburan hati" title="Ketuk untuk kejutan kecil">
+      <img id="foto" alt="Foto spesial">
+      <span class="photo-heart" aria-hidden="true">♥</span>
+    </div>
+    <h1 id="nama"></h1>
+    <p id="judul"></p>
+    <div class="divider" aria-hidden="true">♥</div>
+    <p id="pesan"></p>
+    <p id="dari"></p>
+    <div class="actions">
+      <button id="lagi" type="button">Kejutan lagi!</button>
+      <button id="peluk" class="btn-ghost" type="button">Kirim ♥</button>
+    </div>
+    <p class="footer-tip">Ketuk latar untuk kembang api • Gulir ke bawah untuk melihat galeri</p>
+  </section>
+
+  <!-- 2. Penghitung Waktu Bersama -->
+  <section id="waktuSection" class="glass-panel delay-1 hidden">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Waktu Kita</span>
+      <h2 class="sec-title" id="waktuJudul">Setiap Detik Bersamamu</h2>
+      <p class="sec-sub" id="waktuSub"></p>
+    </div>
+    <div class="counter-grid">
+      <div class="counter-box"><span class="counter-num" id="cHari">0</span><span class="counter-label">Hari</span></div>
+      <div class="counter-box"><span class="counter-num" id="cJam">0</span><span class="counter-label">Jam</span></div>
+      <div class="counter-box"><span class="counter-num" id="cMenit">0</span><span class="counter-label">Menit</span></div>
+      <div class="counter-box"><span class="counter-num" id="cDetik">0</span><span class="counter-label">Detik</span></div>
+    </div>
+  </section>
+
+  <!-- 3. Galeri Kenangan -->
+  <section id="galeriSection" class="glass-panel delay-2 hidden">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Galeri Kenangan</span>
+      <h2 class="sec-title">Potret Kecil Tentang Kita</h2>
+      <p class="sec-sub">Ketuk foto untuk memperbesar dan membaca ceritanya</p>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </section>
+
+  <!-- 4. Alasan Menyayangimu (Kartu Interaktif) -->
+  <section id="alasanSection" class="glass-panel delay-3 hidden">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Catatan Hati</span>
+      <h2 class="sec-title">Hal-Hal yang Aku Suka Darimu</h2>
+      <p class="sec-sub">Ketuk setiap kartu untuk membuka pesan rahasianya</p>
+    </div>
+    <div class="reasons-grid" id="reasonsGrid"></div>
+  </section>
+
+  <!-- 5. Jejak Momen -->
+  <section id="momenSection" class="glass-panel delay-4 hidden">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Cerita Kita</span>
+      <h2 class="sec-title">Jejak Momen Terindah</h2>
+      <p class="sec-sub">Langkah-langkah kecil yang selalu ingin kuingat</p>
+    </div>
+    <div class="timeline" id="timelineList"></div>
+  </section>
+
+  <!-- 6. Penutup -->
+  <footer class="glass-panel closing-box delay-4">
+    <p class="closing-quote" id="penutupText"></p>
+    <button id="ulangBtn" class="btn-ghost" type="button">✦ Buka Kotak Kejutan Lagi</button>
+  </footer>
+</div>
+
+<!-- Navigasi Cepat Mengambang -->
+<nav id="navPill" class="nav-pill hidden" aria-label="Navigasi bagian">
+  <a href="#card" class="active">Kartu</a>
+  <a href="#galeriSection" id="navGaleri">Galeri</a>
+  <a href="#alasanSection" id="navAlasan">Catatan</a>
+  <a href="#momenSection" id="navMomen">Momen</a>
+</nav>
+
+<!-- Lightbox Modal untuk Galeri -->
+<div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Pratinjau foto galeri">
+  <div class="lb-dialog">
+    <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Tutup galeri">✕</button>
+    <div class="lb-media">
+      <img id="lbImg" alt="">
+    </div>
+    <div class="lb-body">
+      <span class="lb-date" id="lbDate"></span>
+      <h3 class="lb-title" id="lbTitle"></h3>
+      <p class="lb-caption" id="lbCaption"></p>
+      <div class="lb-controls">
+        <button class="lb-btn" id="lbPrev" type="button">← Sebelumnya</button>
+        <span class="lb-counter" id="lbCounter">1 / 4</span>
+        <button class="lb-btn" id="lbNext" type="button">Berikutnya →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== UBAH DI SINI ====== */
+const CONFIG = {
+  label:  "Khusus Untukmu",                 // teks kecil di atas kartu
+  nama:   "Halo Kak",                       // nama penerima
+  judul:  "Semangat untuk hari ini!",       // judul kartu
+  pesan:  "Semoga selalu ceria dan selalu semangat.",
+  dari:   "Dari: seseorang yang menyayangimu", // pengirim
+  foto:   "",                               // alamat foto utama (mis. "foto.jpg" atau link). Kosong = ilustrasi romantis
+  ajakan: "Ada sesuatu yang spesial untukmu.", // teks sebelum kotak dibuka
+  tombol: "Kejutan lagi!",                  // teks tombol utama
+  musik:  true,                             // aktifkan musik & efek suara
+  lagu:   "https://music.youtube.com/watch?v=R7mX714_QZs", // link YouTube/YouTube Music, nama file lokal ("lagu.mp3"), atau "" untuk kotak musik bawaan
+  judulLagu: "Kota Ini Tak Sama Tanpamu",   // opsional: judul lagu yang tampil di pojok kanan atas
+  volumeLagu: 0.6,                          // volume lagu (0.1 sampai 1.0)
+  warna:  ["#ff4d79", "#ffb3c6", "#f6d38b", "#c8a2ff", "#fff6f8"],
+
+  /* Penghitung waktu spesial: isi "hari-ini" untuk mulai dari hari ke-0, atau format "YYYY-MM-DD". Kosongkan "" jika tidak ingin ditampilkan */
+  tanggalMulai: "hari-ini",
+  judulWaktu:   "Awal Cerita Kita",
+
+  /* Galeri kenangan: isi properti `foto` dengan nama file (mis. "foto1.jpg") atau URL gambar. Kosong = ilustrasi artistik */
+  galeri: [
+    {
+      foto: "",
+      tanggal: "Kenangan 01",
+      judul: "Senja Pertama Kita",
+      cerita: "Langit sore hari itu terasa lebih hangat hanya karena kamu ada di sampingku."
+    },
+    {
+      foto: "",
+      tanggal: "Kenangan 02",
+      judul: "Tawa di Bawah Bintang",
+      cerita: "Obrolan sederhana yang tidak pernah terasa membosankan, bahkan sampai larut malam."
+    },
+    {
+      foto: "",
+      tanggal: "Kenangan 03",
+      judul: "Langkah Kecil Bersama",
+      cerita: "Setiap perjalanan selalu terasa seperti pulang selama aku menggenggam tanganmu."
+    },
+    {
+      foto: "",
+      tanggal: "Kenangan 04",
+      judul: "Hari Spesialmu",
+      cerita: "Semoga semakin banyak cerita indah yang bisa kita tulis dan simpan bersama."
+    }
+  ],
+
+  /* Kartu pesan rahasia (ketuk untuk membuka) */
+  alasan: [
+    { ikon: "✦", label: "Pesan #1", teks: "Senyummu selalu punya cara paling sederhana untuk menenangkan hariku." },
+    { ikon: "♥", label: "Pesan #2", teks: "Terima kasih sudah selalu sabar, hangat, dan jadi tempat ternyaman untuk bercerita." },
+    { ikon: "☾", label: "Pesan #3", teks: "Bersamamu, hal-hal kecil yang biasa saja selalu terasa istimewa." },
+    { ikon: "❀", label: "Pesan #4", teks: "Aku selalu mendoakan kesehatan, kebahagiaan, dan segala impian baikmu terwujud." }
+  ],
+
+  /* Jejak momen singkat */
+  momen: [
+    { waktu: "Awal Cerita", judul: "Pertama Kali Bertemu", desc: "Siapa sangka pertemuan sederhana itu menjadi awal dari cerita terindah." },
+    { waktu: "Favoritku", judul: "Setiap Tawa & Obrolan", desc: "Momen-momen kecil yang membuatku sadar betapa beruntungnya aku mengenalmu." },
+    { waktu: "Hari Ini & Seterusnya", judul: "Babak Baru yang Lebih Indah", desc: "Selamat merayakan harimu. Mari terus melangkah dan merayakan banyak hari baik bersama." }
+  ],
+
+  penutup: "“Terima kasih atas segala kebaikan dan kehadiran Kakak. Semoga hari-hari ke depan selalu dipenuhi kebahagiaan dan kemudahan.”"
+};
+/* ========================== */
+
+const $ = id => document.getElementById(id);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* Ilustrasi default romantis untuk foto utama & galeri jika belum diisi */
+const placeholder = "data:image/svg+xml;utf8," + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <defs>
+      <radialGradient id="bg" cx="50%" cy="40%" r="65%">
+        <stop offset="0%" stop-color="#4e1a40"/>
+        <stop offset="100%" stop-color="#1b0a22"/>
+      </radialGradient>
+      <linearGradient id="ht" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ffb3c6"/>
+        <stop offset="50%" stop-color="#ff4d79"/>
+        <stop offset="100%" stop-color="#f6d38b"/>
+      </linearGradient>
+    </defs>
+    <rect width="240" height="240" fill="url(#bg)"/>
+    <circle cx="52" cy="54" r="2.2" fill="#f6d38b" opacity="0.8"/>
+    <circle cx="188" cy="64" r="1.8" fill="#ffb3c6" opacity="0.75"/>
+    <circle cx="176" cy="180" r="2.4" fill="#f6d38b" opacity="0.7"/>
+    <circle cx="66" cy="176" r="1.6" fill="#fff6f8" opacity="0.65"/>
+    <path d="M120 172 C120 172 58 134 58 92 C58 68 76 54 96 54 C109 54 117 62 120 69 C123 62 131 54 144 54 C164 54 182 68 182 92 C182 134 120 172 120 172 Z" fill="url(#ht)"/>
+    <path d="M84 82 C88 72 98 68 106 72" fill="none" stroke="#fff6f8" stroke-width="4" stroke-linecap="round" opacity="0.55"/>
+  </svg>`
+);
+
+function makeGalleryArt(index) {
+  const scenes = [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+      <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b123c"/><stop offset="55%" stop-color="#a82459"/><stop offset="100%" stop-color="#f6b37d"/></linearGradient></defs>
+      <rect width="400" height="300" fill="url(#g1)"/>
+      <circle cx="200" cy="175" r="52" fill="#fde8b8" opacity="0.92"/>
+      <path d="M0 225 Q110 195 210 220 T400 212 L400 300 L0 300 Z" fill="#1e0a24"/>
+      <circle cx="80" cy="64" r="2" fill="#fff6f8"/><circle cx="310" cy="52" r="2.4" fill="#fde8b8"/><circle cx="140" cy="40" r="1.5" fill="#fff6f8"/>
+    </svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+      <defs><radialGradient id="g2" cx="65%" cy="30%" r="75%"><stop offset="0%" stop-color="#4e2366"/><stop offset="100%" stop-color="#13081c"/></radialGradient></defs>
+      <rect width="400" height="300" fill="url(#g2)"/>
+      <circle cx="285" cy="82" r="34" fill="#fde8b8"/>
+      <circle cx="298" cy="76" r="30" fill="#2f1542"/>
+      <circle cx="70" cy="70" r="2.2" fill="#fff"/><circle cx="130" cy="110" r="1.8" fill="#ffb3c6"/><circle cx="195" cy="55" r="2.5" fill="#f6d38b"/><circle cx="340" cy="150" r="2" fill="#fff"/><circle cx="110" cy="180" r="1.6" fill="#fde8b8"/>
+      <path d="M0 240 Q120 205 240 235 T400 225 L400 300 L0 300 Z" fill="#0d0513"/>
+    </svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+      <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2c1037"/><stop offset="50%" stop-color="#6b1846"/><stop offset="100%" stop-color="#281136"/></linearGradient></defs>
+      <rect width="400" height="300" fill="url(#g3)"/>
+      <circle cx="165" cy="145" r="68" fill="#ff4d79" opacity="0.28"/>
+      <circle cx="235" cy="155" r="68" fill="#f6d38b" opacity="0.22"/>
+      <path d="M200 202 C200 202 142 164 142 126 C142 104 160 92 178 92 C190 92 197 99 200 105 C203 99 210 92 222 92 C240 92 258 104 258 126 C258 164 200 202 200 202 Z" fill="none" stroke="#fde8b8" stroke-width="3.5" opacity="0.9"/>
+      <circle cx="95" cy="80" r="2" fill="#fde8b8"/><circle cx="310" cy="210" r="2.2" fill="#ffb3c6"/>
+    </svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+      <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#48153b"/><stop offset="100%" stop-color="#190a24"/></linearGradient></defs>
+      <rect width="400" height="300" fill="url(#g4)"/>
+      <circle cx="200" cy="150" r="78" fill="none" stroke="#f6d38b" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.65"/>
+      <circle cx="200" cy="150" r="50" fill="#ff4d79" opacity="0.25"/>
+      <text x="200" y="164" text-anchor="middle" font-size="44" fill="#fde8b8">✦</text>
+      <circle cx="88" cy="215" r="2.2" fill="#ffb3c6"/><circle cx="322" cy="88" r="2.2" fill="#f6d38b"/>
+    </svg>`
+  ];
+  return "data:image/svg+xml;utf8," + encodeURIComponent(scenes[index % scenes.length]);
+}
+
+/* Terapkan konfigurasi dasar */
+$("stageLabel").textContent = CONFIG.label || "Kejutan Spesial";
+$("cardLabel").textContent = "✦ " + (CONFIG.label || "Khusus Untukmu") + " ✦";
+$("ajakan").textContent = CONFIG.ajakan || "Ada sesuatu untukmu.";
+$("nama").textContent = CONFIG.nama;
+$("judul").textContent = CONFIG.judul;
+$("dari").textContent = CONFIG.dari;
+$("lagi").textContent = CONFIG.tombol;
+$("penutupText").textContent = CONFIG.penutup || "";
+$("foto").src = CONFIG.foto || placeholder;
+$("foto").onerror = e => { e.target.onerror = null; e.target.src = placeholder; };
+document.title = "Kejutan untuk " + CONFIG.nama;
+
+/* ================= PENGHITUNG WAKTU BERSAMA ================= */
+if (CONFIG.tanggalMulai) {
+  const isToday = CONFIG.tanggalMulai.toLowerCase() === "hari-ini";
+  const nowDate = new Date();
+  const start = isToday
+    ? new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0)
+    : new Date(CONFIG.tanggalMulai + "T00:00:00");
+  if (!isNaN(start.getTime())) {
+    $("waktuSection").classList.remove("hidden");
+    $("waktuJudul").textContent = CONFIG.judulWaktu || "Setiap Detik Bersamamu";
+    const fmt = start.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+    $("waktuSub").textContent = isToday ? "Hari ke-0 • " + fmt : "Sejak " + fmt;
+
+    const updateCounter = () => {
+      const diff = Math.max(0, Date.now() - start.getTime());
+      const totalSec = Math.floor(diff / 1000);
+      const hari = Math.floor(totalSec / 86400);
+      const jam = Math.floor((totalSec % 86400) / 3600);
+      const menit = Math.floor((totalSec % 3600) / 60);
+      const detik = totalSec % 60;
+      $("cHari").textContent = hari.toLocaleString("id-ID");
+      $("cJam").textContent = String(jam).padStart(2, "0");
+      $("cMenit").textContent = String(menit).padStart(2, "0");
+      $("cDetik").textContent = String(detik).padStart(2, "0");
+    };
+    updateCounter();
+    setInterval(updateCounter, 1000);
+  }
+}
+
+/* ================= GALERI KENANGAN & LIGHTBOX ================= */
+const galeriData = Array.isArray(CONFIG.galeri) ? CONFIG.galeri : [];
+let currentLbIndex = 0;
+
+if (galeriData.length > 0) {
+  $("galeriSection").classList.remove("hidden");
+  const grid = $("galleryGrid");
+  galeriData.forEach((item, idx) => {
+    const fallback = makeGalleryArt(idx);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "gallery-item";
+    btn.innerHTML = `
+      <div class="gallery-thumb"><img alt=""></div>
+      <div class="gallery-meta">
+        <span class="gallery-date"></span>
+        <span class="gallery-title"></span>
+      </div>
+    `;
+    const img = btn.querySelector("img");
+    img.src = item.foto || fallback;
+    img.alt = item.judul || "Kenangan " + (idx + 1);
+    img.onerror = () => { img.onerror = null; img.src = fallback; };
+    btn.querySelector(".gallery-date").textContent = item.tanggal || "";
+    btn.querySelector(".gallery-title").textContent = item.judul || "";
+    btn.addEventListener("click", () => openLightbox(idx));
+    grid.appendChild(btn);
+  });
+} else {
+  $("navGaleri").classList.add("hidden");
+}
+
+function renderLightbox(idx) {
+  currentLbIndex = (idx + galeriData.length) % galeriData.length;
+  const item = galeriData[currentLbIndex];
+  const fallback = makeGalleryArt(currentLbIndex);
+  const img = $("lbImg");
+  img.src = item.foto || fallback;
+  img.alt = item.judul || "Foto kenangan";
+  img.onerror = () => { img.onerror = null; img.src = fallback; };
+  $("lbDate").textContent = item.tanggal || "";
+  $("lbTitle").textContent = item.judul || "";
+  $("lbCaption").textContent = item.cerita || "";
+  $("lbCounter").textContent = `${currentLbIndex + 1} / ${galeriData.length}`;
+}
+
+function openLightbox(idx) {
+  renderLightbox(idx);
+  $("lightbox").classList.remove("hidden");
+  playNote(783.99, 0, 0.5, 0.04);
+}
+
+function closeLightbox() {
+  $("lightbox").classList.add("hidden");
+}
+
+$("lbClose").addEventListener("click", closeLightbox);
+$("lbPrev").addEventListener("click", () => renderLightbox(currentLbIndex - 1));
+$("lbNext").addEventListener("click", () => renderLightbox(currentLbIndex + 1));
+$("lightbox").addEventListener("click", e => {
+  if (e.target === $("lightbox")) closeLightbox();
+});
+addEventListener("keydown", e => {
+  if ($("lightbox").classList.contains("hidden")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") renderLightbox(currentLbIndex - 1);
+  if (e.key === "ArrowRight") renderLightbox(currentLbIndex + 1);
+});
+
+/* ================= KARTU ALASAN INTERAKTIF ================= */
+const alasanData = Array.isArray(CONFIG.alasan) ? CONFIG.alasan : [];
+if (alasanData.length > 0) {
+  $("alasanSection").classList.remove("hidden");
+  const rGrid = $("reasonsGrid");
+  alasanData.forEach((item, idx) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "reason-card";
+    card.innerHTML = `
+      <span class="reason-front">
+        <span class="reason-icon"></span>
+        <span class="reason-label"></span>
+      </span>
+      <span class="reason-text"></span>
+    `;
+    card.querySelector(".reason-icon").textContent = item.ikon || "♥";
+    card.querySelector(".reason-label").textContent = item.label || `Pesan #${idx + 1}`;
+    card.querySelector(".reason-text").textContent = item.teks || "";
+    card.addEventListener("click", () => {
+      const willOpen = !card.classList.contains("opened");
+      card.classList.toggle("opened");
+      if (willOpen) {
+        const r = card.getBoundingClientRect();
+        playNote(659.25 + idx * 65, 0, 0.55, 0.045);
+        confetti(r.left + r.width / 2, r.top + r.height / 2, 24);
+      }
+    });
+    rGrid.appendChild(card);
+  });
+} else {
+  $("navAlasan").classList.add("hidden");
+}
+
+/* ================= TIMELINE JEJAK MOMEN ================= */
+const momenData = Array.isArray(CONFIG.momen) ? CONFIG.momen : [];
+if (momenData.length > 0) {
+  $("momenSection").classList.remove("hidden");
+  const tList = $("timelineList");
+  momenData.forEach(item => {
+    const el = document.createElement("article");
+    el.className = "tl-item";
+    el.innerHTML = `
+      <span class="tl-time"></span>
+      <h3 class="tl-title"></h3>
+      <p class="tl-desc"></p>
+    `;
+    el.querySelector(".tl-time").textContent = item.waktu || "";
+    el.querySelector(".tl-title").textContent = item.judul || "";
+    el.querySelector(".tl-desc").textContent = item.desc || "";
+    tList.appendChild(el);
+  });
+} else {
+  $("navMomen").classList.add("hidden");
+}
+
+/* Highlight tombol navigasi bawah sesuai scroll */
+const navLinks = Array.from(document.querySelectorAll("#navPill a"));
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    navLinks.forEach(a => a.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
+
+/* ================= AUDIO LAGU SENDIRI (YOUTUBE / MP3) & KOTAK MUSIK ================= */
+let soundEnabled = CONFIG.musik !== false;
+let audioCtx = null;
+const bgm = $("bgm");
+const rawSong = (CONFIG.lagu || "").trim();
+const targetVolume = Math.min(1, Math.max(0.05, Number(CONFIG.volumeLagu) || 0.6));
+let fadeTimer = null;
+
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+const ytVideoId = extractYouTubeId(rawSong);
+const hasCustomSong = Boolean(rawSong);
+let ytPlayer = null;
+let ytReady = false;
+let ytFailed = false;
+let wantPlayYT = false;
+
+if (hasCustomSong && CONFIG.judulLagu) {
+  $("songPill").textContent = "♪ " + CONFIG.judulLagu;
+}
+
+if (ytVideoId) {
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+
+  window.onYouTubeIframeAPIReady = () => {
+    const pv = {
+      autoplay: 0,
+      controls: 0,
+      loop: 1,
+      playlist: ytVideoId,
+      playsinline: 1,
+      rel: 0
+    };
+    if (location.protocol === "http:" || location.protocol === "https:") {
+      pv.origin = location.origin;
+    }
+    ytPlayer = new YT.Player("ytHolder", {
+      height: "200",
+      width: "200",
+      videoId: ytVideoId,
+      playerVars: pv,
+      events: {
+        onReady: e => {
+          ytReady = true;
+          e.target.setVolume(Math.round(targetVolume * 100));
+          if (wantPlayYT && soundEnabled) startMusic();
+        },
+        onStateChange: e => {
+          if (e.data === YT.PlayerState.PLAYING) {
+            $("soundBtn").classList.add("playing");
+            if (CONFIG.judulLagu) $("songPill").classList.remove("hidden");
+          } else if (e.data === YT.PlayerState.ENDED && soundEnabled) {
+            e.target.playVideo();
+          } else if (e.data === YT.PlayerState.PAUSED) {
+            $("soundBtn").classList.remove("playing");
+          }
+        },
+        onError: () => {
+          ytFailed = true;
+          if (location.protocol === "file:") {
+            $("songPill").textContent = "♪ Buka via localhost / .mp3";
+            $("songPill").classList.remove("hidden");
+          }
+          if (wantPlayYT && soundEnabled) playRomanticChime();
+        }
+      }
+    });
+  };
+} else if (hasCustomSong) {
+  bgm.src = rawSong;
+  bgm.volume = 0;
+}
+
+function startMusic() {
+  if (!soundEnabled) return;
+  if (ytVideoId) {
+    wantPlayYT = true;
+    if (ytFailed) {
+      playRomanticChime();
+      return;
+    }
+    if (ytReady && ytPlayer && typeof ytPlayer.playVideo === "function") {
+      ytPlayer.setVolume(Math.round(targetVolume * 100));
+      ytPlayer.playVideo();
+    }
+    return;
+  }
+  if (!hasCustomSong) {
+    playRomanticChime();
+    return;
+  }
+  if (fadeTimer) clearInterval(fadeTimer);
+  bgm.volume = 0;
+  const playPromise = bgm.play();
+  if (playPromise && typeof playPromise.then === "function") {
+    playPromise.then(() => {
+      $("soundBtn").classList.add("playing");
+      if (CONFIG.judulLagu) $("songPill").classList.remove("hidden");
+      fadeTimer = setInterval(() => {
+        if (bgm.volume < targetVolume - 0.03) {
+          bgm.volume = Math.min(targetVolume, bgm.volume + 0.04);
+        } else {
+          bgm.volume = targetVolume;
+          clearInterval(fadeTimer);
+          fadeTimer = null;
+        }
+      }, 90);
+    }).catch(() => {});
+  }
+}
+
+function pauseMusic() {
+  wantPlayYT = false;
+  if (fadeTimer) clearInterval(fadeTimer);
+  if (ytVideoId && ytReady && ytPlayer && typeof ytPlayer.pauseVideo === "function") {
+    ytPlayer.pauseVideo();
+  }
+  bgm.pause();
+}
+
+function syncSoundUI() {
+  $("soundIconOn").classList.toggle("hidden", !soundEnabled);
+  $("soundIconOff").classList.toggle("hidden", soundEnabled);
+  $("soundBtn").setAttribute("aria-label", soundEnabled ? "Suara dan musik aktif" : "Suara dan musik mati");
+  if (!soundEnabled) $("soundBtn").classList.remove("playing");
+}
+syncSoundUI();
+
+$("soundBtn").addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  syncSoundUI();
+  if (hasCustomSong) {
+    if (soundEnabled) startMusic();
+    else pauseMusic();
+  } else if (soundEnabled) {
+    playNote(659.25, 0, 0.45, 0.06);
+  }
+});
+
+function getAudioCtx() {
+  if (!soundEnabled) return null;
+  if (!audioCtx) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (Ctx) audioCtx = new Ctx();
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function playNote(freq, delay, duration = 1.2, volume = 0.08) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const now = ctx.currentTime + delay;
+  const osc = ctx.createOscillator();
+  const harmonic = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const harmGain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, now);
+  harmonic.type = "triangle";
+  harmonic.frequency.setValueAtTime(freq * 2, now);
+  harmGain.gain.setValueAtTime(0.15, now);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(volume, now + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  osc.connect(gain);
+  harmonic.connect(harmGain);
+  harmGain.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  harmonic.start(now);
+  osc.stop(now + duration + 0.05);
+  harmonic.stop(now + duration + 0.05);
+}
+
+function playRomanticChime() {
+  const notes = [
+    [523.25, 0.00], [659.25, 0.20], [783.99, 0.40], [987.77, 0.62],
+    [1046.50, 0.86], [987.77, 1.16], [783.99, 1.44], [880.00, 1.72], [1046.50, 2.02]
+  ];
+  notes.forEach(([f, t]) => playNote(f, t, 1.45, 0.075));
+}
+
+function playSparkleChord() {
+  [659.25, 783.99, 987.77, 1318.51].forEach((f, i) => playNote(f, i * 0.07, 0.9, 0.045));
+}
+
+/* ================= KANVAS BINTANG, KONFETI & KEMBANG API ================= */
+const cv = $("fx");
+const ctx = cv.getContext("2d");
+let W = 0, H = 0;
+let parts = [];
+let stars = [];
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = () => CONFIG.warna[Math.floor(Math.random() * CONFIG.warna.length)];
+
+function initStars() {
+  const count = reduce ? 24 : Math.min(75, Math.floor((W * H) / 16000));
+  stars = Array.from({ length: count }, () => ({
+    x: rnd(0, W),
+    y: rnd(0, H),
+    r: rnd(0.7, 2.1),
+    phase: rnd(0, Math.PI * 2),
+    speed: rnd(0.008, 0.024),
+    vy: rnd(-0.18, -0.04),
+    c: Math.random() > 0.35 ? "#fff6f8" : "#f6d38b"
+  }));
+}
+
+function resize() {
+  const d = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth;
+  H = innerHeight;
+  cv.width = W * d;
+  cv.height = H * d;
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  initStars();
+}
+addEventListener("resize", resize);
+resize();
+
+function drawHeart(c, x, y, size, rot) {
+  c.save();
+  c.translate(x, y);
+  c.rotate(rot);
+  const s = size * 0.5;
+  c.beginPath();
+  c.moveTo(0, s * 0.45);
+  c.bezierCurveTo(-s * 1.1, -s * 0.35, -s * 0.95, -s * 1.25, 0, -s * 0.55);
+  c.bezierCurveTo(s * 0.95, -s * 1.25, s * 1.1, -s * 0.35, 0, s * 0.45);
+  c.fill();
+  c.restore();
+}
+
+function confetti(x, y, n = 95) {
+  if (reduce) n = 22;
+  for (let i = 0; i < n; i++) {
+    const a = rnd(-Math.PI * 0.95, -Math.PI * 0.05);
+    const v = rnd(4, 13.5);
+    const isHeart = Math.random() < 0.38;
+    parts.push({
+      x, y,
+      vx: Math.cos(a) * v,
+      vy: Math.sin(a) * v - rnd(1, 3),
+      g: isHeart ? 0.16 : 0.22,
+      life: rnd(95, 165),
+      c: pick(),
+      w: isHeart ? rnd(9, 15) : rnd(6, 11),
+      h: rnd(4, 7),
+      r: rnd(0, Math.PI * 2),
+      vr: rnd(-0.14, 0.14),
+      type: isHeart ? "h" : "k"
+    });
+  }
+}
+
+function firework(x, y, heartShape = Math.random() < 0.45) {
+  const c = pick();
+  const n = reduce ? 20 : (heartShape ? 54 : 68);
+  for (let i = 0; i < n; i++) {
+    let vx, vy;
+    if (heartShape) {
+      const t = (i / n) * Math.PI * 2;
+      const hx = 16 * Math.pow(Math.sin(t), 3);
+      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      const scale = rnd(0.22, 0.28);
+      vx = hx * scale;
+      vy = hy * scale;
+    } else {
+      const a = (i / n) * Math.PI * 2 + rnd(-0.05, 0.05);
+      const v = rnd(1.8, 6.6);
+      vx = Math.cos(a) * v;
+      vy = Math.sin(a) * v;
+    }
+    parts.push({
+      x, y, vx, vy,
+      g: 0.055,
+      life: rnd(50, 82),
+      c: Math.random() < 0.2 ? "#fff6f8" : c,
+      w: rnd(2.2, 4),
+      h: 3,
+      r: 0,
+      vr: 0,
+      type: "f"
+    });
+  }
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+
+  for (const s of stars) {
+    s.phase += s.speed;
+    if (!reduce) {
+      s.y += s.vy;
+      if (s.y < -4) { s.y = H + 4; s.x = rnd(0, W); }
+    }
+    const alpha = 0.22 + 0.55 * (0.5 + 0.5 * Math.sin(s.phase));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = s.c;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  parts = parts.filter(p => p.life > 0 && p.y < H + 40);
+  for (const p of parts) {
+    p.vy += p.g;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= p.type === "f" ? 0.965 : 0.988;
+    p.r += p.vr;
+    p.life--;
+
+    ctx.globalAlpha = Math.min(1, p.life / 28);
+    ctx.fillStyle = p.c;
+
+    if (p.type === "k") {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 1.4)));
+      ctx.restore();
+    } else if (p.type === "h") {
+      drawHeart(ctx, p.x, p.y, p.w, p.r * 0.35);
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.w / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(loop);
+}
+loop();
+
+function balon(n = 14) {
+  if (reduce) return;
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement("div");
+    const isHeart = Math.random() < 0.55;
+    if (isHeart) {
+      b.className = "balon heart-float";
+      b.textContent = "♥";
+      b.style.cssText = `left:${rnd(4, 92)}%;color:${pick()};--sz:${rnd(20, 34)}px;--x:${rnd(-60, 60)}px;--rot:${rnd(-24, 24)}deg;animation-duration:${rnd(5.5, 9.5)}s;animation-delay:${rnd(0, 1.8)}s`;
+    } else {
+      b.className = "balon round";
+      b.style.cssText = `left:${rnd(4, 90)}%;background:${pick()};--x:${rnd(-55, 55)}px;--rot:${rnd(-10, 10)}deg;animation-duration:${rnd(6, 10)}s;animation-delay:${rnd(0, 1.8)}s`;
+    }
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 12500);
+  }
+}
+
+let typingTimer = null;
+function ketik(el, teks) {
+  if (typingTimer) clearInterval(typingTimer);
+  el.textContent = "";
+  if (reduce) {
+    el.textContent = teks;
+    return;
+  }
+  el.classList.add("typing");
+  let i = 0;
+  typingTimer = setInterval(() => {
+    el.textContent += teks[i++];
+    if (i >= teks.length) {
+      clearInterval(typingTimer);
+      typingTimer = null;
+      setTimeout(() => el.classList.remove("typing"), 650);
+    }
+  }, 40);
+}
+
+function hujanKembangApi(n = 6) {
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => firework(rnd(W * 0.14, W * 0.86), rnd(H * 0.14, H * 0.48), i % 2 === 0), i * 280);
+  }
+}
+
+/* Efek tilt 3D halus pada kartu utama di desktop */
+const cardEl = $("card");
+if (!reduce && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  cardEl.addEventListener("pointermove", e => {
+    const r = cardEl.getBoundingClientRect();
+    const rx = (((e.clientY - r.top) / r.height) - 0.5) * -6;
+    const ry = (((e.clientX - r.left) / r.width) - 0.5) * 6;
+    cardEl.style.transform = `perspective(900px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+  });
+  cardEl.addEventListener("pointerleave", () => {
+    cardEl.style.transform = "";
+  });
+}
+
+/* ================= INTERAKSI UTAMA ================= */
+$("box").addEventListener("click", () => {
+  const box = $("box");
+  if (box.classList.contains("open")) return;
+  box.classList.add("open");
+  startMusic();
+
+  const r = box.getBoundingClientRect();
+  setTimeout(() => confetti(r.left + r.width / 2, r.top + 36, 130), 280);
+  setTimeout(() => $("stage").classList.add("fade-out"), 820);
+
+  setTimeout(() => {
+    $("stage").classList.add("hidden");
+    $("experience").classList.remove("hidden");
+    $("navPill").classList.remove("hidden");
+    document.body.classList.add("revealed");
+    window.scrollTo({ top: 0, behavior: "instant" });
+    balon(14);
+    hujanKembangApi(4);
+    setTimeout(() => ketik($("pesan"), CONFIG.pesan), 550);
+  }, 1350);
+});
+
+$("ulangBtn").addEventListener("click", () => {
+  document.body.classList.remove("revealed");
+  $("experience").classList.add("hidden");
+  $("navPill").classList.add("hidden");
+  $("stage").classList.remove("hidden", "fade-out");
+  $("box").classList.remove("open");
+  window.scrollTo({ top: 0, behavior: "instant" });
+});
+
+$("lagi").addEventListener("click", () => {
+  playSparkleChord();
+  hujanKembangApi(7);
+  balon(12);
+});
+
+let loveCount = 0;
+$("peluk").addEventListener("click", e => {
+  loveCount++;
+  const btn = e.currentTarget;
+  btn.textContent = `♥ ×${loveCount}`;
+  playNote(783.99 + Math.min(loveCount, 8) * 32, 0, 0.65, 0.055);
+  const r = btn.getBoundingClientRect();
+  confetti(r.left + r.width / 2, r.top, 45);
+  balon(5);
+});
+
+function burstFromPhoto(e) {
+  const r = $("photoFrame").getBoundingClientRect();
+  const x = e.clientX || r.left + r.width / 2;
+  const y = e.clientY || r.top + r.height / 2;
+  playNote(880, 0, 0.7, 0.05);
+  confetti(x, y, 55);
+}
+
+$("photoFrame").addEventListener("click", burstFromPhoto);
+$("photoFrame").addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    burstFromPhoto(e);
+  }
+});
+
+addEventListener("pointerdown", e => {
+  if (!$("experience").classList.contains("hidden") && (e.target === document.body || e.target === $("experience"))) {
+    firework(e.clientX, e.clientY);
+  }
+});
+</script>
+</body>
+</html>
